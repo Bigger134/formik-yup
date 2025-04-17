@@ -86,6 +86,13 @@ const App: React.FC = () => {
 
   const [cardInputFocused, setCardInputFocused] = useState(false);
 
+  const formatDate = (date: Date | null): string => {
+    if (!date) return '';
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear() % 100;
+    return `${month}/${year}`;
+  };
+
   return (
     <div className="outer-container">
       <div className="app-container">
@@ -166,28 +173,20 @@ const App: React.FC = () => {
                 <DatePicker
                   selected={values.expiryDate}
                   onChange={(date: Date | null) => {
-                    setFieldValue('expiryDate', date);
+                    if (date === null) {
+                      const inputValue = (event?.target as HTMLInputElement).value;
+                      const parsedDate = new Date(`20${inputValue}`);
+                      if (!isNaN(parsedDate.getTime())) {
+                        setFieldValue('expiryDate', parsedDate);
+                      }
+                    } else {
+                      setFieldValue('expiryDate', date);
+                    }
                   }}
                   dateFormat="MM/yy"
                   showMonthYearPicker
                   placeholderText="ММ/YY"
                   className="input-field"
-                  onChangeRaw={(e) => {
-                    const inputValue = e.target.value;
-                    const digits = inputValue.replace(/\D/g, '');
-                    if (digits.length === 4) {
-                      const monthStr = digits.slice(0, 2);
-                      const yearStr = digits.slice(2, 4);
-                      const month = Number(monthStr);
-                      if (month >= 1 && month <= 12) {
-                        const formatted = `${monthStr}/${yearStr}`;
-                        e.target.value = formatted;
-                        const fullYear = 2000 + Number(yearStr);
-                        const newDate = new Date(fullYear, month - 1, 1);
-                        setFieldValue('expiryDate', newDate);
-                      }
-                    }
-                  }}
                 />
                 <ErrorMessage
                   name="expiryDate"
