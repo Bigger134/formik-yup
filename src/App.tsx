@@ -86,13 +86,6 @@ const App: React.FC = () => {
 
   const [cardInputFocused, setCardInputFocused] = useState(false);
 
-  const formatDate = (date: Date | null): string => {
-    if (!date) return '';
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear() % 100;
-    return `${month}/${year}`;
-  };
-
   return (
     <div className="outer-container">
       <div className="app-container">
